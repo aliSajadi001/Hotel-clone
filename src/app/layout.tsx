@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
-import Navbar from "./components/Navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
@@ -31,8 +31,8 @@ export default function RootLayout({
         disableTransitionOnChange
       >
         <body>
-          <Navbar />
           {children}
+          <Toaster />
         </body>
       </ThemeProvider>
     </html>

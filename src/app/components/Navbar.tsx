@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { searchValidation } from "../lib/Validation";
+import { searchValidation } from "../../lib/Validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { House } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -29,7 +29,6 @@ import { usePathname } from "next/navigation";
 
 function Navbar() {
   let path = usePathname();
-  console.log(path);
   let { setTheme } = useTheme();
   let signin = false;
   const form = useForm<z.infer<typeof searchValidation>>({
@@ -101,7 +100,7 @@ function Navbar() {
           ) : (
             <>
               <Link href="signup" className="font-medium">
-                Signin
+                Signup
               </Link>
             </>
           )}
