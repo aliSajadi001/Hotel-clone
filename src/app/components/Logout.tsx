@@ -1,11 +1,11 @@
 import React from 'react'
 
-function Profile() {
+function Logout() {
   return (
     <div>
-      Profile
+      
     </div>
   )
 }
 
-export default Profile
+export default Logout

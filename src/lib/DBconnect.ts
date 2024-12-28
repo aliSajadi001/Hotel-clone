@@ -12,6 +12,5 @@ export const DBconection = async () => {
     });
   } catch (error) {
     console.log(error);
-    throw new Error("Error in mongodb connection");
   }
 };

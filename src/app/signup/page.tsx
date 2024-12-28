@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import Googleauth from "../components/Googleauth";
 
 function Signup() {
+  let {setLoading , loading} = useUserStore()
   let router = useRouter();
   let { setUser, user } = useUserStore();
   useEffect(() => {
@@ -31,7 +32,6 @@ function Signup() {
     }
   }, [user]);
   let { toast } = useToast();
-  let [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof registerValidation>>({
     resolver: zodResolver(registerValidation),

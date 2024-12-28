@@ -1,7 +1,8 @@
 import { DBconection } from "@/lib/DBconnect";
 import { User } from "@/models/user";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-
+import jwt from "jsonwebtoken";
 export async function POST(request: NextRequest) {
   try {
     DBconection();
@@ -9,9 +10,20 @@ export async function POST(request: NextRequest) {
     /************************Find old user**********************/
     let user = await User.findOne({ email: email });
     if (user) {
+      let token = await jwt.sign({ id: user._id }, process.env.SECRET_TOKEN, {
+        expiresIn: 1 * 24 * 60 * 60,
+      });
+      (await cookies()).set("session-token", token, {
+        httpOnly: true,
+        maxAge: 1 * 24 * 60 * 60,
+      });
       return NextResponse.json({
         success: true,
         message: "Signin successfully",
+        user: {
+          email: user.email,
+          _id: user._id,
+        },
       });
     } else {
       return NextResponse.json({

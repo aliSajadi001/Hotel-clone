@@ -26,11 +26,12 @@ import { Moon, LaptopMinimal, Sun } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
+import useUserStore from "../stores/currentUser";
 
 function Navbar() {
+  let { user } = useUserStore();
   let path = usePathname();
   let { setTheme } = useTheme();
-  let signin = false;
   const form = useForm<z.infer<typeof searchValidation>>({
     resolver: zodResolver(searchValidation),
     defaultValues: {
@@ -86,15 +87,14 @@ function Navbar() {
           <Link href="/">
             <House className="text-xl hover:scale-105" />
           </Link>
-
-          {signin ? (
-            <Link href="/profile/id">
+          {user ? (
+            <Link href={`/profile/${user?._id}`}>
               <Avatar>
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
+                  src=""
+                  alt=""
                 />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>{user?.email.toString()[0].toUpperCase()}</AvatarFallback>
               </Avatar>
             </Link>
           ) : (

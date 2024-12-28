@@ -11,7 +11,16 @@ export interface Response {
 
 
 
-export interface Login {
-  success: boolean;
-  message: string;
+export interface Token {
+  id: string;
+  iat: number;
+  exp: number;
+}
+
+export interface VerifyUser {
+  id: string;
+  email: string;
+  password: string;
+  createdAt: Date;
+  upadatedAt: Date;
 }

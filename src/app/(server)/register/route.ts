@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       let user = new User({ email, password: hash });
       await user.save();
       /****************Creating token********************/
-      let token = await jwt.sign({ id: user?._id }, process.env.SECRET_TOKEN, {
+      let token = await jwt.sign({ id: user?._id }, process.env.SECRET_TOKEN as string, {
         expiresIn: 1 * 24 * 60 * 60 ,
       });
       (await cookies()).set("session-token", token, {

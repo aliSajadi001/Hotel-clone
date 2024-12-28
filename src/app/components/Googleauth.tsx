@@ -5,12 +5,14 @@ import { app } from "../firebase/firebaseConfig";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Axios from "../utils/axios";
-import { Login } from "../interface/user";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
-function Googleauth() {
-  let [loading, setLoading] = useState<boolean>(false);
+import { Response } from "../interface/user";
+import useUserStore from "../stores/currentUser";
 
+
+function Googleauth() { 
+  let { setUser , setLoading ,loading} = useUserStore();
   let router = useRouter();
   let handleSignin = async () => {
     try {
@@ -22,9 +24,10 @@ function Googleauth() {
           try {
             setLoading(true);
             let { email }: { email: string | null } = result.user;
-            await Axios.post<Login>("/login", { email })
+            await Axios.post<Response>("/login", { email })
               .then((data) => {
                 if (data?.data.success) {
+                  setUser(data.data.user);
                   setLoading(false);
                   router.push("/");
                   toast({
