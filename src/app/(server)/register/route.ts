@@ -1,24 +1,25 @@
 import { DBconection } from "@/lib/DBconnect";
-import { User } from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { User } from "@/models/user";
 
 interface UserDate {
   email: string;
   password: string;
+  username: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
     DBconection();
-    let { email, password }: UserDate = await request.json();
-    console.log(email , password)
-    if (!email || !password) {
+    let { email, password, username }: UserDate = await request.json();
+    console.log(email, password, username )
+    if (!email || !password || !username) {
       return NextResponse.json({
         success: false,
-        message: "Email and password is raquired",
+        message: "All fields are raquired",
       });
     }
     /****************hashing password********************/
@@ -32,15 +33,20 @@ export async function POST(request: NextRequest) {
       });
     } else {
       /****************Creating newUser********************/
-      let user = new User({ email, password: hash });
-      await user.save();
+      let user =  new User({password :hash , email , username})
+        await user.save()
+      console.log(user)
       /****************Creating token********************/
-      let token = await jwt.sign({ id: user?._id }, process.env.SECRET_TOKEN as string, {
-        expiresIn: 1 * 24 * 60 * 60 ,
-      });
+      let token = await jwt.sign(
+        { id: user?._id },
+        process.env.SECRET_TOKEN as string,
+        {
+          expiresIn: 1 * 24 * 60 * 60,
+        }
+      );
       (await cookies()).set("session-token", token, {
         httpOnly: true,
-        maxAge: 1 * 24 * 60 * 60 ,
+        maxAge: 1 * 24 * 60 * 60,
       });
 
       return NextResponse.json({
@@ -48,6 +54,7 @@ export async function POST(request: NextRequest) {
         message: "Create user successfully",
         user: {
           email: user?.email,
+          username : user?.username,
           _id: user?._id,
         },
       });

@@ -7,7 +7,7 @@ import useAuth from "./hooks/isAuth";
 
 export default function Home() {
  let {loading } = useUserStore()
-useAuth()
+ useAuth()
   if (loading) {
     return (
       <div className=" absolute flex flex-col items-center justify-center dark:bg-white dark:bg-opacity-10 inset-0">

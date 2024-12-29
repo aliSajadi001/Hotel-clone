@@ -18,8 +18,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import useUserStore from "@/app/stores/currentUser";
 import { useRouter } from "next/navigation";
+import Navbar from "@/app/components/Navbar";
+import Logout from "@/app/components/Logout";
 
 function Profile({ params }: { params: { id: string } }) {
+  
   let { toast } = useToast();
 let router =useRouter()
   let { user, setLoading, loading } = useUserStore();
@@ -28,6 +31,7 @@ let router =useRouter()
     defaultValues: {
       password: "",
       email: user?.email,
+      username : user?.username
     },
   });
   interface Update {
@@ -36,8 +40,8 @@ let router =useRouter()
   }
   const onSubmit = (value: z.infer<typeof profileValidation>) => {
     setLoading(true);
-    let { email, password } = value;
-    Axios.post<Update>("/update", { email, password })
+    let { email, password , username} = value;
+    Axios.post<Update>("/update", { email, password , username})
       .then((data) => {
         if (data.data.success) {
           router.push("/")
@@ -59,6 +63,7 @@ let router =useRouter()
   };
   return (
     <div className="w-full h-screen flex items-center justify-center">
+      <Navbar/>
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -94,6 +99,25 @@ let router =useRouter()
             />
             <FormField
               control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="disabled:cursor-not-allowed"
+                      disabled={loading}
+                      type="text"
+                      placeholder="Username"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
@@ -111,7 +135,7 @@ let router =useRouter()
               )}
             />
             {/************************Buttons******************************* */}
-            <div className="w-full flex flex-col items-center gap-3 ">
+            <div className="w-full flex  items-center gap-3 ">
               <Button
                 disabled={loading}
                 type="submit"
@@ -119,6 +143,7 @@ let router =useRouter()
               >
                 Save changes
               </Button>
+              <Logout/>
             </div>
           </form>
         </FormProvider>

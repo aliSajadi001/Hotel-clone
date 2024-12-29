@@ -43,7 +43,7 @@ function Navbar() {
   };
   return (
     <motion.div
-      className="w-full h-[50px] flex items-center dark:bg-white dark:bg-opacity-10 dark:backdrop-blur-sm bg-slate-500 bg-opacity-15 backdrop-blur-sm px-4"
+      className="w-full h-[50px] flex items-center dark:bg-white dark:bg-opacity-10 dark:backdrop-blur-sm bg-slate-500 bg-opacity-15 backdrop-blur-sm px-4 fixed top-0 left-0 z-50"
       initial={{ opacity: 0, y: -30 }}
       animate={{ opacity: 1, y: 1 }}
       transition={{ duration: 0.6 }}
@@ -90,11 +90,7 @@ function Navbar() {
           {user ? (
             <Link href={`/profile/${user?._id}`}>
               <Avatar>
-                <AvatarImage
-                  src=""
-                  alt=""
-                />
-                <AvatarFallback>{user?.email.toString()[0].toUpperCase()}</AvatarFallback>
+                <AvatarFallback>{user?.username?.toString()[0].toUpperCase()}</AvatarFallback>
               </Avatar>
             </Link>
           ) : (

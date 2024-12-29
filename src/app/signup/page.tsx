@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import Googleauth from "../components/Googleauth";
 
 function Signup() {
-  let {setLoading , loading} = useUserStore()
+  let { setLoading, loading } = useUserStore();
   let router = useRouter();
   let { setUser, user } = useUserStore();
   useEffect(() => {
@@ -38,15 +38,17 @@ function Signup() {
     defaultValues: {
       password: "",
       email: "",
+      username: "",
     },
   });
   /***************Handle submit************************* */
   const onSubmit = (value: z.infer<typeof registerValidation>) => {
     setLoading(true);
-    let { email, password } = value;
-    Axios.post<Response>("/register", { email, password })
+    let { email, password, username } = value;
+    Axios.post<Response>("/register", { email, password, username })
       .then((data) => {
         if (data?.data.success) {
+          console.log(data.data)
           toast({
             description: data.data.message,
           });
@@ -102,6 +104,19 @@ function Signup() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
