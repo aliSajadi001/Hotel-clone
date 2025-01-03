@@ -4,9 +4,9 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import useUserStore from "./stores/currentUser";
 import useAuth from "./hooks/isAuth";
-
 export default function Home() {
  let {loading } = useUserStore()
+ console.log(new Date(1403 , 1 , 0).getDate())
  useAuth()
   if (loading) {
     return (

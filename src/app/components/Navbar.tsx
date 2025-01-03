@@ -15,7 +15,7 @@ import { z } from "zod";
 import { searchValidation } from "../../lib/Validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { House } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,

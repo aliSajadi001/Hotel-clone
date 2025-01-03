@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
-import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -12,144 +12,156 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import Axios from "@/app/utils/axios";
-import { profileValidation } from "@/lib/Validation";
-import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
-import useUserStore from "@/app/stores/currentUser";
+import { profileValidation } from "@/lib/Validation";
+
+import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import Navbar from "@/app/components/Navbar";
+import useUserStore from "@/app/stores/currentUser";
+import Axios from "@/app/utils/axios";
 import Logout from "@/app/components/Logout";
+import { Response, User } from "@/app/interface/user";
+import Link from "next/link";
 
 function Profile({ params }: { params: { id: string } }) {
-  
+  let { setUser, setLoading, loading, user } = useUserStore();
   let { toast } = useToast();
-let router =useRouter()
-  let { user, setLoading, loading } = useUserStore();
+  console.log(loading);
+  let [userInfo, setUserInfo] = useState<User>({});
+  console.log(userInfo);
+  let router = useRouter();
   const form = useForm<z.infer<typeof profileValidation>>({
     resolver: zodResolver(profileValidation),
     defaultValues: {
       password: "",
       email: user?.email,
-      username : user?.username
+      username: user?.username,
     },
   });
-  interface Update {
-    success: boolean;
-    message: string;
-  }
+  /********************Onsubmit******************************/
   const onSubmit = (value: z.infer<typeof profileValidation>) => {
+    let { email, username, password } = value;
+    console.log(email, password);
     setLoading(true);
-    let { email, password , username} = value;
-    Axios.post<Update>("/update", { email, password , username})
-      .then((data) => {
-        if (data.data.success) {
-          router.push("/")
-          setLoading(false);
-          toast({
-            description: data.data.message,
-          });
-        } else {
-          setLoading(false);
-          toast({
-            description: data.data.message,
-          });
-        }
-      })
-      .catch((err) => {
+    Axios.post<Response>("/update", {
+      email,
+      username,
+      password,
+    }).then((data) => {
+      if (data.data.success) {
+        setUser(data.data.user);
         setLoading(false);
-        console.log(err);
-      });
+        toast({
+          title: "Success",
+          description: data.data.message,
+        });
+        router.push("/");
+      } else {
+        setLoading(false);
+        toast({
+          title: "Error",
+          description: data.data.message,
+        });
+      }
+    });
   };
-  return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <Navbar/>
-      <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9 }}
-        className=" w-[90%] md:w-[50%] h-full flex flex-col items-center justify-center "
-      >
-        <p className="text-lg  font-medium md:text-3xl w-full text-center">
-          My profile
-        </p>
-        <FormProvider {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 w-full"
-          >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="disabled:cursor-not-allowed"
-                      disabled={true}
-                      type="email"
-                      placeholder="Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="disabled:cursor-not-allowed"
-                      disabled={loading}
-                      type="text"
-                      placeholder="Username"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      type="password"
-                      placeholder="Password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/************************Buttons******************************* */}
-            <div className="w-full flex  items-center gap-3 ">
-              <Button
-                disabled={loading}
-                type="submit"
-                className="w-full lg:text-lg text-sm disabled:bg-opacity-30 disabled:cursor-not-allowed"
+  
+    return (
+      <div className="w-full h-screen flex items-center justify-center px-3 ">
+        {/************************Forms******************************* */}
+        <motion.div
+          className="flex flex-col items-center justify-center w-[50%] "
+          initial={{ opacity: 0, y: -200 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <p className="text-4xl font-medium text-gray-950">Signup</p>
+          <motion.div className="xl:w-[400px] w-[300px] h-full">
+            <FormProvider {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
               >
-                Save changes
-              </Button>
-              <Logout/>
-            </div>
-          </form>
-        </FormProvider>
-      </motion.div>
-    </div>
-  );
-}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          defaultValue={user?.email}
+                          disabled={true}
+                          type="email"
+                          placeholder="Email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input
+                          defaultValue={user?.username}
+                          type="text"
+                          placeholder="Username"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/************************Buttons******************************* */}
+                <div className="w-full flex flex-col items-center gap-3 ">
+                  <div className="flex items-center gap-2 w-full">
+                    <Button
+                      disabled={loading}
+                      type="submit"
+                      className="w-full lg:text-lg text-sm disabled:bg-opacity-30"
+                    >
+                      Save
+                    </Button>
+                    <div className="w-full">
+                      <Logout />
+                    </div>
+                  </div>
+
+                  <Button type="button" className="w-full md:text-xl text-sm ">
+                    <Link href="/createList">Crate list</Link>
+                  </Button>
+                </div>
+              </form>
+            </FormProvider>
+          </motion.div>
+        </motion.div>
+      </div>
+    );
+  }
+
 
 export default Profile;

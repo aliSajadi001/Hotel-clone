@@ -37,7 +37,7 @@ function Logout() {
     }
   };
   return (
-    <div>
+    <div className="w-full flex items-center justify-center">
       <Button
         onClick={handleLogout}
         disabled={loading}

@@ -15,12 +15,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { registerValidation } from "@/lib/Validation";
-import Axios from "../utils/axios";
-import { Response } from "../interface/user";
+import Axios from "../../utils/axios";
+import { Response } from "../../interface/user";
 import { useToast } from "@/hooks/use-toast";
-import useUserStore from "../stores/currentUser";
+import useUserStore from "../../stores/currentUser";
 import { useRouter } from "next/navigation";
-import Googleauth from "../components/Googleauth";
+import Googleauth from "../../components/Googleauth";
 
 function Signup() {
   let { setLoading, loading } = useUserStore();
